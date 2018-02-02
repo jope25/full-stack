@@ -7,6 +7,8 @@ class App extends React.Component {
     this.state = {
       selected: 0,
       votes: [0, 0, 0, 0, 0, 0],
+      favorite: 0,
+      mostVotes: 0,
     }
   }
 
@@ -16,15 +18,24 @@ class App extends React.Component {
       this.setState({ selected: selection })
     }
     const selected = this.state.selected
+    let favorite = this.state.favorite
 
     const vote = () => () => {
-      const copy = this.state.votes
-      copy[selected] += 1
-      this.setState({ votes: copy })     
+      const votes = [...this.state.votes]
+      votes[selected] += 1
+
+      let mostVotes = this.state.mostVotes
+      if (votes[selected] > mostVotes) {
+        mostVotes = votes[selected]
+        favorite = selected
+      }
+      this.setState({
+        votes,
+        favorite,
+        mostVotes,
+      })
     }
-    const mostVoted = 
-      this.state.votes.reduce((maxIndex, curNum, curIndex, array) => curNum > array[maxIndex] ?
-      curIndex : maxIndex, 0);
+    
     return (
       <div>
         <div>
@@ -36,9 +47,9 @@ class App extends React.Component {
         <button onClick={selectAnecdote()}>next anecdote</button>
         <h3>anecdote with most votes:</h3>
         <div>
-          {this.props.anecdotes[mostVoted]}
+          {this.props.anecdotes[favorite]}
           <br />
-          has {this.state.votes[mostVoted]} votes
+          has {this.state.votes[favorite]} votes
         </div>
       </div>
     )
